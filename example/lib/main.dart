@@ -9,20 +9,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  windowManager.waitUntilReadyToShow(
-    const WindowOptions(
-      size: Size(200, 300),
-      minimumSize: Size(200, 300),
-      maximumSize: Size(200, 300),
-      skipTaskbar: true,
-    ),
-    () async {
-      await windowManager.show();
-      await windowManager.focus();
-    },
-  );
-
-
   await hotKeyManager.unregisterAll();
 
   await RustLib.init();
@@ -65,6 +51,7 @@ class HomeState extends State<Home> {
         } else {
           _appName = await WUtil.recordTopWindow();
           final (x, y) = enigo.location();
+          debugPrint("mouse location ($x, $y)");
           await windowManager.setPosition(Offset(x.toDouble(), y.toDouble()));
           await windowManager.show();
           setState(() {});
@@ -94,11 +81,11 @@ class HomeState extends State<Home> {
             ),
             TextButton(
               onPressed: () async {
-                await windowManager.blur();
-                await windowManager.hide();
-                if (await WUtil.setTopWindow()) {
-                  enigo.text(text: _text);
-                }
+                // await windowManager.blur();
+                // await Future.delayed(Durations.medium2);
+                // await windowManager.hide();
+                await WUtil.setTopWindow();
+                enigo.text(text: _text);
               },
               child: const Text("模拟输入"),
             )
