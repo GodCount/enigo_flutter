@@ -9,6 +9,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
+  windowManager.waitUntilReadyToShow(
+    const WindowOptions(
+      size: Size(200, 300),
+      minimumSize: Size(200, 300),
+      maximumSize: Size(200, 300),
+      skipTaskbar: true,
+    ),
+    () async {
+      await windowManager.show();
+      await windowManager.focus();
+    },
+  );
+
   await hotKeyManager.unregisterAll();
 
   await RustLib.init();
@@ -84,8 +97,16 @@ class HomeState extends State<Home> {
                 // await windowManager.blur();
                 // await Future.delayed(Durations.medium2);
                 // await windowManager.hide();
-                await WUtil.setTopWindow();
-                enigo.text(text: _text);
+                // await WUtil.setTopWindow();
+                // enigo.text(text: _text);
+                enigo.key(
+                  key: PhysicalKeyboardKey.tab,
+                  direction: Direction.click,
+                );
+                enigo.key(
+                  key: PhysicalKeyboardKey.keyA,
+                  direction: Direction.click,
+                );
               },
               child: const Text("模拟输入"),
             )
