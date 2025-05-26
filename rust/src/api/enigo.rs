@@ -195,6 +195,9 @@ impl _Button {
     }
 }
 
+// key code corresponding table
+// https://github.com/flutter/flutter/blob/master/dev/tools/gen_keycodes/data/physical_key_data.g.json
+
 #[frb(rust2dart(
     dart_type = "PhysicalKeyboardKey",
     dart_code = "PhysicalKeyboardKey({})"
