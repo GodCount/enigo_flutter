@@ -12,6 +12,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 abstract class Enigo implements RustOpaqueInterface {
   void button({required Button button, required Direction direction});
 
+  static bool hasPermission({required bool openPrompt}) => RustLib.instance.api
+      .crateApiEnigoEnigoHasPermission(openPrompt: openPrompt);
+
   void key({required PhysicalKeyboardKey key, required Direction direction});
 
   (int, int) location();

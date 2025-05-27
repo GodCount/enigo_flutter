@@ -274,6 +274,7 @@ dependencies = [
 name = "enigo_flutter"
 version = "0.1.0"
 dependencies = [
+ "core-foundation",
  "enigo",
  "flutter_rust_bridge",
 ]

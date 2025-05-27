@@ -18,6 +18,44 @@ pub struct _Settings {
     pub windows_subject_to_mouse_speed_and_acceleration_level: bool,
 }
 
+#[cfg(target_os = "macos")]
+#[frb(ignore)]
+mod permission {
+    use core_foundation::{
+        base::TCFType,
+        dictionary::{CFDictionary, CFDictionaryRef},
+        string::{CFString, CFStringRef},
+    };
+
+    #[link(name = "ApplicationServices", kind = "framework")]
+    extern "C" {
+        pub fn AXIsProcessTrustedWithOptions(options: CFDictionaryRef) -> bool;
+        static kAXTrustedCheckOptionPrompt: CFStringRef;
+    }
+
+    pub fn has_permission(open_prompt_to_get_permissions: bool) -> bool {
+        let key = unsafe { kAXTrustedCheckOptionPrompt };
+        let key = unsafe { CFString::wrap_under_create_rule(key) };
+
+        let value = if open_prompt_to_get_permissions {
+            core_foundation::boolean::CFBoolean::true_value()
+        } else {
+            core_foundation::boolean::CFBoolean::false_value()
+        };
+
+        let options = CFDictionary::from_CFType_pairs(&[(key, value)]);
+        let options = options.as_concrete_TypeRef();
+        unsafe { AXIsProcessTrustedWithOptions(options) }
+    }
+}
+#[cfg(target_os = "windows")]
+#[frb(ignore)]
+mod permission {
+    pub fn has_permission(open_prompt_to_get_permissions: bool) -> bool {
+        true
+    }
+}
+
 #[frb]
 pub struct Enigo {
     #[frb(ignore)]
@@ -41,6 +79,11 @@ impl Enigo {
         Self {
             enigo: Mutex::new(enigo::Enigo::new(&Settings::default()).unwrap()),
         }
+    }
+
+    #[frb(sync)]
+    pub fn has_permission(open_prompt: bool) -> bool {
+        permission::has_permission(open_prompt)
     }
 
     #[frb(sync)]
